@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <div class="form-container mx-auto w-full mt-10 p-10">
+        <form method= "POST" class="w-1/2 mx-auto p-5 shadow-2xl">            
+            {% csrf_token %}  
+            {{ forms.as_p }}
+            <div class="button-container mt-10 flex justify-center">
+                <button type="submit" class="bg-red-600 text-white px-3 rounded-lg focus:bg-black focus:text-white">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="w-full mt-5 text-center text-xl font-semibold">{{ message }}</li>
+        {% endfor %}
+    {% endif %}
+  
+{% endblock content %}

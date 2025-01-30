@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <section class="event-container m-5 flex justify-around items-center">  
+        {% if forms %}
+            <div class="event-list border-2 border-red-400">
+                <p class="bg-black px-40 py-2 w-full text-white text-3xl">Event List :</p>
+                {% for event in forms %}
+                    <li class="mx-3 text-xl">{{ event.name }} </li>   
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-xl font-semibold">Invalid Name or Category</p>
+        {% endif %} 
+    </section>
+{% endblock content %}

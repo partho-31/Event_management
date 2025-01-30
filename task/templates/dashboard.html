@@ -1,0 +1,97 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <section class="statistic">
+        <div class="stat-container m-2  grid grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-4">
+            <div class="event ">
+                <a href="{% url "home" %}?type=total">
+                    <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
+                        <p class="text-2xl font-mono sm:text-3xl">{{ count_e.total }}</p>                   
+                    </div>
+                </a>
+                <p class="text-center text-lg font-mono font-semibold sm:text-2xl">Total Events</p>
+            </div>
+            <div class="event">
+                <a href="{% url "home" %}?type=upcoming">
+                    <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
+                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_e.upcoming }}</p>                   
+                    </div>
+                </a>
+                <p class="text-center text-lg font-semibold font-mono sm:text-2xl">Upcoming</p>
+            </div> 
+            <div class="event">
+                <a href="{% url "home" %}?type=past">
+                    <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
+                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_e.past_event }}</p>                   
+                    </div>
+                </a>
+                <p class="text-center text-lg font-semibold font-mono sm:text-2xl">Past Events</p>
+            </div> 
+            <div class="category ">
+                <a href="{% url "category_list" %}">
+                    <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
+                        <p class="text-2xl font-mono sm:text-5xl">{{ count_c.total }}</p>                   
+                    </div>
+                </a>
+                <p class="text-center text-lg font-mono font-semibold sm:text-2xl">Category</p>
+            </div> 
+        </div>
+    </section>
+    
+
+    {% if upcoming %}
+        {% comment %} Upcoming events  {% endcomment %}
+        <section class="event-container flex items-center justify-center mt-20">  
+                <div class="event-list m-5 w-1/2 border-2 border-red-400">
+                    <p class="bg-black text-center text-white text-2xl">Upcoming events:</p>
+                    {% for event in upcoming %}
+                        <li class="mx-3 text-xl">{{ event.name }} </li>   
+                    {% endfor %}
+                </div>
+        </section>
+
+    {% elif past_event %}
+        {% comment %} Past event  {% endcomment %}
+        <section class="event-container flex items-center justify-center mt-20">  
+                <div class="event-list m-5 w-1/2 border-2 border-red-400">
+                    <p class="bg-black text-center text-white text-2xl">Past events:</p>
+                    {% for event in past_event %}
+                        <li class="mx-3 text-xl">{{ event.name }} </li>   
+                    {% endfor %}
+                </div>
+        </section>
+
+    {% elif total_event %}
+        {% comment %} Total event  {% endcomment %}
+        <section class="event-container flex items-center justify-center mt-20">  
+                <div class="event-list m-5 w-1/2 border-2 border-red-400">
+                    <p class="bg-black text-center text-white text-2xl">Total events:</p>
+                    {% for event in total_event %}
+                        <li class="mx-3 text-xl">{{ event.name }} </li>   
+                    {% endfor %}
+                </div>
+        </section>
+
+    {% else %}
+        {% comment %} Today's event list {% endcomment %}
+        <section class="event-container flex items-center justify-center mt-20">  
+            {% if today %}
+                <div class="event-list m-5 w-1/2 border-2 border-red-400">
+                    <p class="bg-black text-center text-white text-2xl">Today's events list:</p>
+                    {% for event in today %}
+                        <li class="mx-3 text-xl">{{ event.name }} </li>   
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="event-list m-5 w-1/2 border-2 border-red-400">
+                    <p class="bg-black text-center text-white text-2xl">Today's events list:</p>
+                        <li class="mx-3 text-xl">No events for today! </li>   
+                </div>
+            {% endif %}
+        </section>
+    {% endif %}
+
+{% endblock content %}
+
+
+
