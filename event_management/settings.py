@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'event_management.wsgi.application'
 # Replace the SQLite DATABASES configuration with PostgreSQL:
 DATABASES = {
     'default': dj_database_url.config(
-        default=f'postgres://{config("DB_USER")}:{config("DB_PASSWORD")}@{config("DB_HOST")}:{config("DB_PORT")}/{config("DB_NAME")}',
+        # Replace this value with your local database's connection string.
+        default='postgresql://event_management_v8p9_user:KXaWTIymke5NTrrQWxkMM95aarqrLcpY@dpg-cujusljtq21c73e2eo0g-a.oregon-postgres.render.com/event_management_v8p9',
         conn_max_age=600
     )
 }
-
 
 
 # Password validation
