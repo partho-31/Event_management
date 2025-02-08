@@ -66,10 +66,10 @@ def delete_event(request,id):
     if request.method == 'POST':
         event = Event.objects.get(id=id)
         event.delete()
-        return redirect('event_list')
+        return redirect('organizer_dashboard')
     else:
         messages.error(request,"Something went wrong!")
-        return redirect('event_list')
+        return redirect('organizer_dashboard')
 
 @login_required
 @user_passes_test(is_manager,login_url='front_page')
@@ -118,10 +118,10 @@ def delete_category(request,id):
     if request.method == 'POST':
         category = Category.objects.get(id=id)
         category.delete()
-        return redirect('category_list')
+        return redirect('organizer_dashboard')
     else:
         messages.error(request,"Something went wrong!")
-        return redirect('category_list')
+        return redirect('organizer_dashboard')
  
    
 def view_event(request):
@@ -171,3 +171,4 @@ def rsvp(request,id):
 def event_details(request,id):
     event = Event.objects.get(id = id)
     return render(request,'event_details.html',{'event' : event})
+
