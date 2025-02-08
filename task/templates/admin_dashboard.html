@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static "css/output.css" %}">
+</head>
+<body>
+    <section >
+        <div class="navbar-container py-8 px-5 shadow-xl sm:px-10 grid-rows-3 sm:grid grid-cols-3">
+            <div class=' flex justify-evenly justify-items-center'>
+                <div class=" text-red-600 font-serif text-center font-bold text-lg sm:text-3xl">PARTH'S EVENT</div>
+            </div>
+            <div class="flex justify-evenly">
+                <a href="{% url "admin_dashboard" %}">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Dashboard</div>
+                </a>           
+                <a href="{% url "admin_dashboard" %}?type=events">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Events</div>
+                </a>           
+                <a href="{% url "admin_dashboard" %}?type=groups">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Groups</div>
+                </a>           
+                <a href="{% url "create_groups" %}">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Create Group</div>
+                </a>           
+                <a href="{% url "home" %}">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">View Site</div>
+                </a>           
+            </div>
+            <div class='flex justify-center sm:justify-end items-center'>
+                <form action="{% url "sign_out" %}" method="post">
+                    {% csrf_token %}
+                    <button type='submit' class="text-white text-sm sm:text-lg px-2 font-serif rounded-md bg-red-600 ">Log out</button>  
+                </form>
+            </div>
+        </div>
+    </section>
+
+    {% comment %} Data Section  {% endcomment %}
+    {% if events %}
+        <section class="mt-10 mx-4">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-6 py-3">NUMBER</th>
+                        <th class="border border-gray-300 px-6 py-3">EVENT NAME</th>
+                        <th class="border border-gray-300 px-6 py-3">LOCATION</th>
+                        <th class="border border-gray-300 px-6 py-3">DEADLINE</th>
+                        <th class="border border-gray-300 px-6 py-3">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr class= "bg-white ">
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ forloop.counter }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ event.name }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ event.location }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ event.deadline }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">
+                                <div class="button-container flex justify-center gap-2 items-center">
+                                    <a href="{% url 'add_event' %}" class="bg-green-600 px-2 text-white">Create</a>
+                                    <a href="{% url 'update_event' event.id %}" class="bg-yellow-600 px-2 text-white">Edit</a>
+                                    <form action="{% url 'delete_event' event.id %}" method='POST'>
+                                        {% csrf_token %}
+                                        <button type="submit" class="bg-red-600 px-2 text-white">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% elif groups %}
+        <section class="mt-10 mx-4">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-6 py-3">NUMBER</th>
+                        <th class="border border-gray-300 px-6 py-3">GROUP</th>
+                        <th class="border border-gray-300 px-6 py-3">PERMISSIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in groups %}
+                        <tr class= "bg-white ">
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ forloop.counter }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ group }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">
+                                {% for permission in group.permissions.all %}
+                                    <p class="text-left">{{ permission.codename }}</p>
+                                {% endfor %}
+                            </td>                        
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% else %}   
+        <section class="mt-10 mx-4">
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 px-6 py-3">NUMBER</th>
+                        <th class="border border-gray-300 px-6 py-3">USERNAME </th>
+                        <th class="border border-gray-300 px-6 py-3">EMAIL</th>
+                        <th class="border border-gray-300 px-6 py-3">USER ID</th>
+                        <th class="border border-gray-300 px-6 py-3">ASSIGNED ROLE</th>
+                        <th class="border border-gray-300 px-6 py-3">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr class= "bg-white ">
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ forloop.counter }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ user.username }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ user.email }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">{{ user.id }}</td>
+                            <td class="border border-gray-300 px-6 py-3 text-center">
+                                {% for group in user.groups.all %}
+                                    {{group.name}}
+                                {% endfor %}
+
+                            </td>
+                            <td class="border border-gray-300 px-6 py-3 text-center"><a href="{% url "assign_role" user.id %}" class="bg-yellow-500 px-2">CHANGE</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <section class= "m-14 flex justify-center items-center">
+        {% if messages %}
+            {% for message in messages %}
+                <p class="text-yellow-400 text-xl font-semibold">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </section>
+
+
+
+
+{% endblock content %}

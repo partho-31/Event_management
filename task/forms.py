@@ -1,33 +1,41 @@
 from django import forms
-from .models import Event,Category,Participant
+from .models import Event,Category
 
-class StyledFormMixin:
-    
+class StyledFormMixin:  
     def StyledWidget(self):
         for field_name,field in self.fields.items():
             if isinstance(field.widget,forms.TextInput):
                 field.widget.attrs.update({      
-                    'class' : 'border-2 w-full border-red-300 px-2 rounded-lg' ,
+                    'class' : 'py-2 px-3 w-full outline-none font-mono text-white placeholder-slate-300 placeholder-opacity-50 bg-slate-400 bg-opacity-20 rounded-lg ' ,
                     'placeholder' : f"Enter {field_name}"
-                })
+                }) 
             elif isinstance(field.widget,forms.EmailInput):
                 field.widget.attrs.update({
-                    'class' : 'border-2 border-red-300 w-full px-2 rounded-lg',
+                    'class' : 'py-2 px-3 w-full outline-none font-mono text-white placeholder-slate-300 placeholder-opacity-50 bg-slate-400 bg-opacity-20 rounded-lg ',
                     'placeholder' : f'Enter {field_name}'
                 })
             elif isinstance(field.widget,forms.Textarea):
                 field.widget.attrs.update({
-                    'class' :'border-2 border-red-300 w-full px-2 rounded-lg',
+                    'class' :'py-2 px-3 w-full outline-none font-mono text-white placeholder-slate-300 placeholder-opacity-50 bg-slate-400 bg-opacity-20 rounded-lg ',
                     'placeholder' : f'Enter {field_name}',
                     'rows' : 2
                 })
             elif isinstance(field.widget,forms.CheckboxSelectMultiple):
                 field.widget.attrs.update({
-                    'class' : 'border-2 border-red-300 rounded-lg',
+                    'class' : 'py-2 px-3 outline-none font-mono text-white placeholder-slate-300 placeholder-opacity-50 bg-slate-400 bg-opacity-20 rounded-lg ',
                 })
             elif isinstance(field.widget,forms.SelectDateWidget):
                 field.widget.attrs.update({
-                    'class' : ' rounded-lg'
+                    'class' : 'm-2 rounded-lg'
+                })
+            elif isinstance(field.widget,forms.PasswordInput):
+                field.widget.attrs.update({
+                    'class' : 'py-2 px-3 w-full outline-none font-mono text-white placeholder-slate-300 placeholder-opacity-50 bg-slate-400 bg-opacity-20 rounded-lg ' ,
+                    'placeholder' : f"{field.label}"
+                })
+            elif isinstance(field.widget,forms.ClearableFileInput):
+                field.widget.attrs.update({
+                    'class' : 'border-2 m-2 px-2 rounded-lg'
                 })
     
     def __init__(self,*args,**kwargs):
@@ -35,11 +43,11 @@ class StyledFormMixin:
         self.StyledWidget()
         
 
-
 class CategoryFormModel(StyledFormMixin,forms.ModelForm):
     class Meta:
         model = Category
         fields = '__all__'
+
 
 class EventFormModel(StyledFormMixin,forms.ModelForm):
     class Meta:
@@ -47,15 +55,11 @@ class EventFormModel(StyledFormMixin,forms.ModelForm):
         fields =  '__all__'
         widgets = {
             'deadline' : forms.SelectDateWidget,
-            'category' : forms.Select(attrs={
-                'class':'w-1/2 border-2 border-red-300 rounded-lg'
-                })
+            'category' : forms.RadioSelect(attrs={
+                'class':'border-2 m-2 px-2 rounded-lg',
+                
+                }),
+            'participants' : forms.CheckboxSelectMultiple
         }
 
-class ParticipantFormModel(StyledFormMixin,forms.ModelForm):
-    class Meta:
-        model = Participant
-        fields = '__all__'
-        widgets = {
-            'event' : forms.CheckboxSelectMultiple,
-        }
+

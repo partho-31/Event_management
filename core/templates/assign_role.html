@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static "css/output.css" %}">
+</head>
+<body>
+    <section >
+        <div class="navbar-container py-8 px-5 shadow-xl sm:px-10  grid grid-cols-3">
+            <div class=' flex justify-evenly justify-items-center'>
+                <div class=" text-red-600 font-serif font-bold text-sm sm:text-3xl">PARTH'S EVENT</div>
+            </div>
+            <div class="flex justify-evenly">
+                <a href="{% url "home" %}">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Dashboard</div>
+                </a>           
+                <a href="{% url "admin_dashboard" %}?type=events">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Events</div>
+                </a>           
+                <a href="{% url "admin_dashboard" %}?type=groups">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Groups</div>
+                </a>           
+                <a href="{% url "create_groups" %}">
+                    <div class="block py-2 text-gray-600 hover:text-gray-800">Create Group</div>
+                </a>           
+            </div>
+            <div class='flex justify-end items-center'>
+                <a href="{% url "home" %}" class="text-white text-sm sm:text-lg px-2 font-serif rounded-md bg-red-600 ">Log out</a>  
+            </div>
+        </div>
+    </section>
+
+    <section class="form-holder">
+        <form method='POST'>
+            {% csrf_token %}
+            <div class="m-10 p-10 flex justify-center gap-10">
+                {{ forms }}
+            </div>
+            <div class="flex justify-center"><button type="submit" class="text-white text-sm sm:text-lg px-10 py-1 mb-10 font-serif rounded-md bg-red-600 ">Submit</button></div>
+        </form>
+    </section>
+
+</body>
+
+</html>

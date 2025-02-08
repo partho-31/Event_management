@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <section class='m-20 h-lvh'>
+        <div class="m-10 p-4 grid sm:grid-cols-2 shadow-xl shadow-gray-500">
+            <div class="m-4 shadow-xl shadow-gray-500">
+                <div class="h-64 w-full">
+                    {% if event.pictures %}
+                        <img src="{{ event.pictures.url }}" class="p-10 w-full h-full object-cover" alt="Event Image">
+                    {% endif %}
+                </div>
+                <p class="text-center text-xl mt-2 font-serif font-bold">{{ event.name }}</p>
+                <p class="text-center mt-2 font-serif ">{{ event.description }}</p>
+                <p class="mt-2 text-center font-thin">{{ event.location }}</p>
+                <p class="text-center mb-2 font-sans "> Deadline : {{ event.deadline }}</p>
+            </div>
+            <div class="  m-4 shadow-xl shadow-gray-500">
+                <div class="m-5 border-l-8 border-amber-400 text-xl font-bold font-serif"><p class="m-2">Participant under event</p></div>
+                {% for participant in event.participants.all %}
+                    <p class="text-stone-500 font-bold ms-10">{{ forloop.counter }}. {{ participant|upper }}</p>
+                {% endfor %}
+            </div>
+        </div> 
+    </section>
+{% endblock content %}

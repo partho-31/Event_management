@@ -1,12 +1,16 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.db.models import Q,Count
-from .forms import CategoryFormModel,EventFormModel,ParticipantFormModel
+from .forms import CategoryFormModel,EventFormModel
 from django.contrib import messages
-from .models import Event,Category,Participant
+from .models import Event,Category
 from datetime import datetime
+from django.contrib.auth.models import User,Group,Permission
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required,user_passes_test
+from core.views import is_admin,is_manager
 
-
+@login_required
 def dashboard(request): 
     type = request.GET.get('type',"")
 
@@ -48,17 +52,16 @@ def search(request):
 
 def add_event(request):
     form = EventFormModel()
-
     if request.method == 'POST':
-        form = EventFormModel(request.POST)
+        form = EventFormModel(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request,"Event added successfuly")
             return redirect('add_event')
-
     return render(request,'event_form.html',{"forms":form})
 
-
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def delete_event(request,id):
     if request.method == 'POST':
         event = Event.objects.get(id=id)
@@ -66,8 +69,10 @@ def delete_event(request,id):
         return redirect('event_list')
     else:
         messages.error(request,"Something went wrong!")
-        return redirect('category_list')
+        return redirect('event_list')
 
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def update_event(request,id):
     event = Event.objects.get(id=id)
     event_form = EventFormModel(instance=event)
@@ -81,18 +86,20 @@ def update_event(request,id):
 
     return render(request,'event_form.html',{'forms':event_form})
 
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def add_category(request):
     form = CategoryFormModel()
-
     if request.method == 'POST':
         form = CategoryFormModel(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request,"Category added successfuly")
-            return redirect('add_category')
-        
+            return redirect('add_category')    
     return render(request,'category_form.html',{"forms":form})
 
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def update_category(request,id):
     category = Category.objects.get(id=id)
     form = CategoryFormModel(instance=category)
@@ -105,6 +112,8 @@ def update_category(request,id):
     
     return render(request,'category_form.html',{'forms': form})
 
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def delete_category(request,id):
     if request.method == 'POST':
         category = Category.objects.get(id=id)
@@ -113,41 +122,7 @@ def delete_category(request,id):
     else:
         messages.error(request,"Something went wrong!")
         return redirect('category_list')
-   
-
-def add_participant(request):
-    form = ParticipantFormModel()
-
-    if request.method == 'POST':
-        form = ParticipantFormModel(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request,"Participant added successfuly")
-            return redirect('add_participant')
-        
-    return render(request,'participant_form.html',{"forms":form})
-
-
-def update_participant(request,id):
-    participant = Participant.objects.get(id=id)
-    form = ParticipantFormModel(instance=participant)
-
-    if request.method == 'POST':
-        form = ParticipantFormModel(request.POST,instance = participant)
-        form.save()
-        messages.success(request,"Updated successfuly")
-        return redirect('update_participant',id)
-    
-    return render(request,'participant_form.html',{'forms': form})
-
-def delete_participant(request,id):
-    if request.method == 'POST':
-        participant = Participant.objects.get(id=id)
-        participant.delete()
-        return redirect('participant_list')
-    else:
-        messages.error(request,"Something went wrong!")
-        return redirect('participant_list')
+ 
    
 def view_event(request):
     event_list = Event.objects.select_related('category').all()
@@ -157,7 +132,42 @@ def view_category(request):
     category_list = Category.objects.all()
     return render(request,'category.html',{'category_list' : category_list})
 
-def view_participant(request):
-    participants = Participant.objects.prefetch_related('event').all()
-    return render(request,'participant.html',{'participants' : participants})
+@login_required
+@user_passes_test(is_admin,login_url= 'front_page')
+def admin_dashboard(request):
+    type = request.GET.get('type',"")
 
+    events = ""
+    groups = ""
+    user = ""
+
+    if type == 'events':
+        events = Event.objects.select_related('category').all()
+    elif type == 'groups':
+        groups = Group.objects.prefetch_related('permissions').all()
+    else:
+        user = User.objects.all()
+    return render(request,'admin_dashboard.html',{'users':user,'events': events,'groups': groups})
+
+def rsvp(request,id):
+    event = Event.objects.get(id = id)
+    if event.participants.filter(id= request.user.id).exists():
+        messages.error(request,f'You have all ready take place in { event.name }!')
+        return render(request,'confirmation.html')
+    else:
+        user = request.user
+        participant_mail = [user.email]
+        event.participants.add(user.id)
+        send_mail(
+            "Inviation Paper",
+            f"Hi! {user.username}\nYou have succesfuly registered for {event.name} .Don't forget to check deadlines.We hope you will be on time\n\nThank you!",
+            'parthokumarmondal90@gmail.com',
+            participant_mail,
+        )
+
+        messages.success(request,"You have succesfuly take place in this event!")
+        return render(request,'confirmation.html')
+    
+def event_details(request,id):
+    event = Event.objects.get(id = id)
+    return render(request,'event_details.html',{'event' : event})

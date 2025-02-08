@@ -1,30 +1,24 @@
 {% extends "index.html" %}
 
 {% block content %}
-    <section class="event-container m-5 grid grid-cols-1 sm:grid-cols-2 justify-items-center items-center">
-        
-        <div class="event-list border-2 border-red-400">
-            <p class="bg-black px-40 text-center py-2 w-full text-white text-lg sm:text-3xl">Events List:</p>
-            {% for event in event_list %}
-                <div class="ps-5 text-xl mb-2">
-                    <div class="m-2  flex justify-between">
-                        <div>{{ event.name }} </div>
-                        <div class="button-container flex justify-center gap-2 items-center">
-                            <a href="{% url 'update_event' event.id %}" class="bg-green-600 px-2 text-white">Edit</a>
-                            <form action="{% url 'delete_event' event.id %}" method='POST'>
+    <section class="event-container mt-14">     
+        <div class="event-list">
+            <div class=" w-full ms-20 px-3 border-s-4 font-semibold border-yellow-400 text-yellow-400 text-lg sm:text-3xl">Events List:</div> 
+            <div class="grid sm:grid-cols-3 grid-cols-1">
+                {% for event in event_list %}    
+                    <div class=" m-4 p-3 mx-24 shadow-slate-600 shadow-md border-slate-500">
+                        <p class="text-center text-lg font-serif font-bold">Event name : {{ event.name }} </p> 
+                        <p class="text-center text-sm font-thin">Deadline : {{ event.deadline }} </p> 
+                        <div class="button-container flex justify-center items-center">
+                            <a href="{% url 'event_details' event.id %}" class="text-black text-opacity-60 text-sm sm:text-md px-2 m-2  border-2 border-red-600 rounded-lg"> Details</a>
+                            <form action="{% url 'add_to_rsvp' event.id %}" method='POST'>
                                 {% csrf_token %}
-                                <button type="submit" class="bg-red-600 px-2 text-white">Delete</button>
+                                <button type="submit" class="text-black text-opacity-60 text-sm sm:text-md px-2 m-2 rounded-lg border-2 border-teal-600">RSVP</button>
                             </form>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="btn_container">
-            <a href="{% url "add_event" %}">
-                <button type="submit" class="bg-green-800 p-2 m-4 rounded-xl hover:bg-red-600 text-white">create event</button>
-            </a>
+                {% endfor %}
+            </div>
         </div>
     </section>
 
