@@ -14,5 +14,6 @@ urlpatterns = [
     path('search/',search,name='search'),
     path('organizer_dashboard/',organizer_dashboard,name='organizer_dashboard'),
     path('add_to_rsvp/<int:id>/',rsvp,name='add_to_rsvp'),
+    path('no_permission/',No_permission,name='no_permission')
     
 ]

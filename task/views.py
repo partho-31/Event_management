@@ -16,7 +16,7 @@ def search(request):
     return render(request,'search.html',{'forms' : events})
 
 @login_required
-@user_passes_test(is_manager,login_url='front_page')
+@user_passes_test(is_manager,login_url='no_permission')
 def add_event(request):
     form = EventFormModel()
     if request.method == 'POST':
@@ -28,7 +28,7 @@ def add_event(request):
     return render(request,'event_form.html',{"forms":form})
 
 @login_required
-@user_passes_test(is_manager,login_url='front_page')
+@user_passes_test(is_manager,login_url='no_permission')
 def delete_event(request,id):
     if request.method == 'POST':
         event = Event.objects.get(id=id)
@@ -61,12 +61,12 @@ class Update_event(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         return redirect('update_event',event.id)
         
     def test_func(self):
-        return is_admin(self.request.user)
+        return is_manager(self.request.user)
 
 
 
 @login_required
-@user_passes_test(is_manager,login_url='front_page')
+@user_passes_test(is_manager,login_url='no_permission')
 def add_category(request):
     form = CategoryFormModel()
     if request.method == 'POST':
@@ -78,7 +78,7 @@ def add_category(request):
     return render(request,'category_form.html',{"forms":form})
 
 @login_required
-@user_passes_test(is_manager,login_url='front_page')
+@user_passes_test(is_manager,login_url='no_permission')
 def update_category(request,id):
     category = Category.objects.get(id=id)
     form = CategoryFormModel(instance=category)
@@ -92,7 +92,7 @@ def update_category(request,id):
     return render(request,'category_form.html',{'forms': form})
 
 @login_required
-@user_passes_test(is_manager,login_url='front_page')
+@user_passes_test(is_manager,login_url='no_permission')
 def delete_category(request,id):
     if request.method == 'POST':
         category = Category.objects.get(id=id)
@@ -122,3 +122,6 @@ def rsvp(request,id):
         messages.success(request,"You have succesfuly take place in this event!")
         return render(request,'confirmation.html')
 
+
+def No_permission(request):
+    return render(request,'no_permission.html')
