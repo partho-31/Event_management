@@ -4,6 +4,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.dispatch import receiver
 from django.core.mail import send_mail 
 from django.conf import settings
+from user.models import User_profile
 
 @receiver(post_save,sender = User)
 def activation_link(sender,instance,created,**kwargs):
@@ -23,3 +24,9 @@ def assign_role(sender,instance,created,**kwargs):
         user_group,created = Group.objects.get_or_create(name = 'User')
         instance.groups.add(user_group)
         instance.save()
+    
+@receiver(post_save,sender = User)
+def create_profile_after_user(sender,instance,created,**kwargs):
+    if created:
+        User_profile.objects.create(user = instance)
+    

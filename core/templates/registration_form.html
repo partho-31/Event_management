@@ -1,14 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Management</title>
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-</head>
-<body>   
-    <section class="body-container bg-cover bg-center bg-no-repeat" style="background-image: url('{% static 'images/main_page.jpg' %}')">
+{% extends "home_navbar.html" %}
+{% block title %}Sign Up{% endblock %}
+
+{% block AfterNav %}
+    <section class="body-container">
         <div class="flex justify-center items-center h-fit">
             <div class="sm:w-1/3 my-14 p-12 bg-black bg-opacity-60 rounded-xl">
                 <p class="text-4xl font-serif font-bold text-white ">Sign Up</p>
@@ -56,6 +50,6 @@
             </footer>
         </div>
     </section>
-</body>
-</html>
+{% endblock AfterNav %}
+
 

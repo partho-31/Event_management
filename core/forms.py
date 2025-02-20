@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from django.contrib.auth.models import User,Group,Permission
+from django.contrib.auth.models import User
 from task.forms import StyledFormMixin
 import re
+from django.contrib.auth.forms import PasswordResetForm,SetPasswordForm
 
 class RegistrationForm(StyledFormMixin,UserCreationForm):
     class Meta:
@@ -48,28 +49,14 @@ class RegistrationForm(StyledFormMixin,UserCreationForm):
         if password1 != password2:
             raise forms.ValidationError('Password are not same!')
 
+
 class LogInForm(StyledFormMixin,AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-class CreateGroupForm(forms.ModelForm):
-    permissions = forms.ModelMultipleChoiceField(
-        queryset = Permission.objects.all(),
-        widget = forms.CheckboxSelectMultiple,
-        required = False,
-        label = 'Assign Permission',
-    )
-    class Meta:
-        model = Group
-        fields = ['name','permissions']
-        widgets ={
-            'name' : forms.TextInput(attrs={
-                'class' : 'border-2 border-red-600 p-1 rounded-xl',
-            })
-        }
 
-class AssignRoleForm(forms.Form):
-    role = forms.ModelChoiceField(
-        queryset= Group.objects.all(),
-        empty_label= "Select a role",
-    )
+
+class CustomPasswordResetForm(StyledFormMixin,PasswordResetForm):
+    pass
+
+class CustomSetPasswordForm(StyledFormMixin,SetPasswordForm):
+    pass

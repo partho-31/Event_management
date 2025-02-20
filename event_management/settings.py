@@ -1,6 +1,6 @@
 from decouple import config
 from pathlib import Path
-import dj_database_url
+# import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,8 +15,9 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com','http://127.0.0.1:8000/home/dashboard']
+ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
+# CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com','http://127.0.0.1:8000/home/dashboard']
 
 FRONTEND_URL = 'http://127.0.0.1:8000'
 # Application definition
@@ -28,8 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'site_controller',
     'task',
     'core',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -66,25 +69,25 @@ WSGI_APPLICATION = 'event_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('USER'),
-#         'PASSWORD': config('PASSWORD'),
-#         'HOST': config('HOST'),
-#         'PORT': config('PORT',cast = int),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
+        'PORT': config('PORT',cast = int),
+    }
+}
 
 # Replace the SQLite DATABASES configuration with PostgreSQL:
-DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://event_management_v8p9_user:KXaWTIymke5NTrrQWxkMM95aarqrLcpY@dpg-cujusljtq21c73e2eo0g-a.oregon-postgres.render.com/event_management_v8p9',
-        conn_max_age=600
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Replace this value with your local database's connection string.
+#         default='postgresql://event_management_v8p9_user:KXaWTIymke5NTrrQWxkMM95aarqrLcpY@dpg-cujusljtq21c73e2eo0g-a.oregon-postgres.render.com/event_management_v8p9',
+#         conn_max_age=600
+#     )
+# }
 
 
 # Password validation
@@ -141,3 +144,5 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast= bool)
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+LOGIN_URL = '/sign_in/'

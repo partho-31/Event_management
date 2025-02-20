@@ -6,7 +6,7 @@
             <div class="event ">
                 <a href="{% url "home" %}?type=total">
                     <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
-                        <p class="text-2xl font-mono sm:text-3xl">{{ count_e.total }}</p>                   
+                        <p class="text-2xl font-mono sm:text-3xl">{{ count_event.total }}</p>                   
                     </div>
                 </a>
                 <p class="text-center text-lg font-mono font-semibold sm:text-2xl">Total Events</p>
@@ -14,7 +14,7 @@
             <div class="event">
                 <a href="{% url "home" %}?type=upcoming">
                     <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
-                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_e.upcoming }}</p>                   
+                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_event.upcoming }}</p>                   
                     </div>
                 </a>
                 <p class="text-center text-lg font-semibold font-mono sm:text-2xl">Upcoming</p>
@@ -22,7 +22,7 @@
             <div class="event">
                 <a href="{% url "home" %}?type=past">
                     <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
-                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_e.past_event }}</p>                   
+                        <p class="text-2xl font-mono font-semibold sm:text-3xl sm:font-bold">{{ count_event.past_event }}</p>                   
                     </div>
                 </a>
                 <p class="text-center text-lg font-semibold font-mono sm:text-2xl">Past Events</p>
@@ -30,7 +30,7 @@
             <div class="category ">
                 <a href="{% url "category_list" %}">
                     <div class=" w-32 h-32 flex items-center justify-center border-4 rounded-full border-red-600">
-                        <p class="text-2xl font-mono sm:text-5xl">{{ count_c.total }}</p>                   
+                        <p class="text-2xl font-mono sm:text-5xl">{{ count_category.total }}</p>                   
                     </div>
                 </a>
                 <p class="text-center text-lg font-mono font-semibold sm:text-2xl">Category</p>

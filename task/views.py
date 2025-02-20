@@ -1,55 +1,22 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
-from django.db.models import Q,Count
+from django.db.models import Q
 from .forms import CategoryFormModel,EventFormModel
 from django.contrib import messages
 from .models import Event,Category
-from datetime import datetime
-from django.contrib.auth.models import User,Group,Permission
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required,user_passes_test
-from core.views import is_admin,is_manager
+from core.views import is_manager,is_admin
+from django.views.generic import UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 
-@login_required
-def dashboard(request): 
-    type = request.GET.get('type',"")
-
-    upcoming = ""
-    past_event= ""
-    total_event = ""
-    today = ""
-
-    if type == 'upcoming':
-        upcoming = Event.objects.filter(deadline__gt = datetime.now())
-    elif type == 'past':
-        past_event = Event.objects.filter(deadline__lt = datetime.now())
-    elif type == 'total':
-        total_event = Event.objects.select_related('category').all()
-    else:
-        today = Event.objects.filter(deadline = datetime.today())
-
-    count_event = Event.objects.aggregate(
-        total = Count('id'),
-        upcoming = Count('id', filter=Q(deadline__gt= datetime.now())),
-        past_event = Count('id', filter=Q(deadline__lt= datetime.now())),
-    )
-    count_category = Category.objects.aggregate(
-        total = Count('id'),
-    )
-    return render(request,"dashboard.html",{
-        'count_e' : count_event,
-        'count_c' : count_category,
-        'upcoming' : upcoming,
-        'past_event' : past_event,
-        'total_event' : total_event,
-        'today' : today,
-        })
 
 def search(request):
     text = request.GET.get('text'," ")
     events = Event.objects.filter(Q(name__icontains=text) | Q(location__icontains=text)) 
     return render(request,'search.html',{'forms' : events})
 
+@login_required
+@user_passes_test(is_manager,login_url='front_page')
 def add_event(request):
     form = EventFormModel()
     if request.method == 'POST':
@@ -71,20 +38,32 @@ def delete_event(request,id):
         messages.error(request,"Something went wrong!")
         return redirect('organizer_dashboard')
 
-@login_required
-@user_passes_test(is_manager,login_url='front_page')
-def update_event(request,id):
-    event = Event.objects.get(id=id)
-    event_form = EventFormModel(instance=event)
 
-    if request.method == 'POST':
-        event_form = EventFormModel(request.POST,instance = event)
-        if event_form.is_valid():
-            event_form.save()
-            messages.success(request,"Updated successfuly")
-            return redirect('update_event',id)
+class Update_event(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model = Event
+    form_class = EventFormModel
+    context_object_name = 'forms'
+    pk_url_kwarg = 'id'
 
-    return render(request,'event_form.html',{'forms':event_form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["forms"] = self.get_form()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        event = self.get_object()
+        form = EventFormModel(request.POST,instance = event)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Event updated successfuly")
+            return redirect('update_event',event.id)
+        return redirect('update_event',event.id)
+        
+    def test_func(self):
+        return is_admin(self.request.user)
+
+
 
 @login_required
 @user_passes_test(is_manager,login_url='front_page')
@@ -123,31 +102,6 @@ def delete_category(request,id):
         messages.error(request,"Something went wrong!")
         return redirect('organizer_dashboard')
  
-   
-def view_event(request):
-    event_list = Event.objects.select_related('category').all()
-    return render(request,'event.html',{'event_list': event_list})
-
-def view_category(request):
-    category_list = Category.objects.all()
-    return render(request,'category.html',{'category_list' : category_list})
-
-@login_required
-@user_passes_test(is_admin,login_url= 'front_page')
-def admin_dashboard(request):
-    type = request.GET.get('type',"")
-
-    events = ""
-    groups = ""
-    user = ""
-
-    if type == 'events':
-        events = Event.objects.select_related('category').all()
-    elif type == 'groups':
-        groups = Group.objects.prefetch_related('permissions').all()
-    else:
-        user = User.objects.all()
-    return render(request,'admin_dashboard.html',{'users':user,'events': events,'groups': groups})
 
 def rsvp(request,id):
     event = Event.objects.get(id = id)
@@ -167,8 +121,4 @@ def rsvp(request,id):
 
         messages.success(request,"You have succesfuly take place in this event!")
         return render(request,'confirmation.html')
-    
-def event_details(request,id):
-    event = Event.objects.get(id = id)
-    return render(request,'event_details.html',{'event' : event})
 

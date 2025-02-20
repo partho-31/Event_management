@@ -1,14 +1,14 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from .forms import RegistrationForm,LogInForm,CreateGroupForm,AssignRoleForm
+from .forms import RegistrationForm,LogInForm,CustomPasswordResetForm,CustomSetPasswordForm
 from django.contrib.auth import login,logout
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required,user_passes_test
 from task.models import Event,Category
-
-
+from django.contrib.auth.views import PasswordResetView,PasswordResetConfirmView
+from django.urls import reverse_lazy
 
 def is_admin(user):
     return user.groups.filter(name = 'Admin').exists()
@@ -51,6 +51,7 @@ def sign_up(request):
             return redirect('sign_in')
     return render(request,'registration_form.html',{'forms':form})
 
+
 def activate_acc(request,user_id,token):
     user = User.objects.get(id = user_id) 
     if default_token_generator.check_token(user,token):
@@ -59,32 +60,7 @@ def activate_acc(request,user_id,token):
         return redirect('sign_in')
     else:
         return HttpResponse("Invalid id or token")
-
-@login_required
-@user_passes_test(is_admin,login_url='no_permission') 
-def create_groups(request):
-    form = CreateGroupForm()
-    if request.method == 'POST':
-        form = CreateGroupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('create_groups')
-    return render(request,'create_group.html',{'forms' : form})
-
-@login_required
-@user_passes_test(is_admin,login_url='no_permission')
-def assign_role(request,id):
-    user = User.objects.get(id=id)
-    form = AssignRoleForm()
-    if request.method == 'POST':
-        form = AssignRoleForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data['role']
-            user.groups.clear()
-            user.groups.add(data)
-            user.save()
-            return redirect('admin_dashboard')
-    return render(request,'assign_role.html',{'forms': form})
+    
 
 def sign_out(request):
     if request.method == 'POST':
@@ -106,3 +82,27 @@ def organizer_dashboard(request):
         events = Event.objects.all()
     return render(request,'organizer.html',{'events': events,'categorys': category})
 
+
+
+class PasswordReset(PasswordResetView):
+    form_class = CustomPasswordResetForm
+    html_email_template_name = 'password_reset_email.html'
+    success_url = reverse_lazy('sign_in')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['protocol'] = 'https' if self.request.is_secure() else 'http'
+        context['domain'] = self.request.get_host()
+        return context 
+
+    def form_valid(self, form):
+        messages.success(self.request,"A password resent email is sent to your email.Please check your inbox.")
+        return super().form_valid(form)
+    
+class PasswordResetConfirm(PasswordResetConfirmView):
+    form_class = CustomSetPasswordForm
+    success_url = reverse_lazy('sign_in')
+
+    def form_valid(self, form):
+        messages.success(self.request,"Password reset succesful!")
+        return super().form_valid(form)

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>{% block title %} Dashboard {% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}"> 
 </head>
 <body>
@@ -31,10 +31,9 @@
                     <input type="search" placeholder="Enter name or location" name='text' class="w-1/2 sm:w-full px-2 border-2 border-teal-600 rounded-lg focus:border-teal-400 focus:outline-none">
                     <button type="submit" class="text-black text-opacity-50 text-sm sm:text-lg px-2 font-serif rounded-md border-2 border-teal-600 focus:border-teal-400">Search</button>  
                 </form>
-                <form action="{% url "sign_out" %}" method="post">
-                    {% csrf_token %}
-                    <button type='submit' class="text-red-600 text-sm sm:text-lg px-2 border-s-2 border-red-600 font-serif  ">Log out</button>  
-                </form>
+                <div class="h-9 w-9">
+                    <a href="{% url 'profile_view' %}"><img src= {{ user.user_profile.profile_img.url }} class="h-full w-full rounded-full object-cover"></a>
+                </div>
             </div>
         </div>
     </section>
