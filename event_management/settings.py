@@ -19,7 +19,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com','http://127.0.0.1:8000/home/dashboard']
 
-FRONTEND_URL = 'http://127.0.0.1:8000'
+FRONTEND_URL = 'https://event-management-gh07.onrender.com/'
 # Application definition
 
 INSTALLED_APPS = [

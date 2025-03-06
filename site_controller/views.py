@@ -30,7 +30,6 @@ class Admin_dashboard(LoginRequiredMixin,UserPassesTestMixin,TemplateView):
         return context
 
 
-
 @login_required
 @user_passes_test(is_admin,login_url='no_permission') 
 def create_groups(request):
